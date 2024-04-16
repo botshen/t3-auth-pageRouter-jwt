@@ -1,6 +1,7 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { api } from "~/utils/api";
 
@@ -57,10 +58,10 @@ export default function Home() {
 
 function AuthShowcase() {
   const { data: sessionData } = useSession();
-
+  const router = useRouter();
   const { data: secretMessage } = api.post.getSecretMessage.useQuery(
     undefined, // no input
-    { enabled: sessionData?.user !== undefined }
+    { enabled: sessionData?.user !== undefined },
   );
 
   return (
@@ -71,7 +72,9 @@ function AuthShowcase() {
       </p>
       <button
         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-        onClick={sessionData ? () => void signOut() : () => void signIn()}
+        onClick={
+          sessionData ? () => void signOut() : () => router.push("/login")
+        }
       >
         {sessionData ? "Sign out" : "Sign in"}
       </button>
